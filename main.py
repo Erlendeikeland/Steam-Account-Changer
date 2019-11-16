@@ -16,7 +16,6 @@ import win32api
 import win32com.client
 
 import tkinter as tk
-from tkinter import messagebox
 from tkinter.ttk import *
 
 
@@ -90,7 +89,6 @@ class SteamGUI:
         path = self.get_path("users.json")
         self.window.title("Steam Account Changer")
         self.window.geometry("339x350")
-        self.window.configure(background="#0d0d0d")
         self.window.iconbitmap(self.get_path("icon.ico"))
         self.window.resizable(False, False)
 
@@ -112,38 +110,38 @@ class SteamGUI:
         self.combo.grid(column=1, row=2, columnspan=10, pady=(8, 3))
         self.combo.current(0)
 
-        self.top1 = tk.Label(self.window, text="Account", font="Arial 15 bold", background="#0d0d0d", foreground="white")
+        self.top1 = tk.Label(self.window, text="Account", font="Arial 15 bold")
         self.top1.grid(column=1, row=0, columnspan=2, sticky="W", pady=(10, 0))
 
-        self.login_user_btn = tk.Button(self.window, text="Login", width=14, command=self.login_user, background="#0d0d0d", foreground="white", activebackground="#0d0d0d", activeforeground="white")
+        self.login_user_btn = tk.Button(self.window, text="Login", width=14, command=self.login_user)
         self.login_user_btn.grid(column=1, row=3, columnspan=1, pady=(1, 0), sticky="W")
 
-        self.remove_user_btn = tk.Button(self.window, text="Remove user", width=14, command=self.remove_user, background="#0d0d0d", foreground="white", activebackground="#0d0d0d", activeforeground="white")
+        self.remove_user_btn = tk.Button(self.window, text="Remove user", width=14, command=self.remove_user)
         self.remove_user_btn.grid(column=1, row=3, columnspan=1, pady=(1, 0), sticky="E")
 
         self.silent_login = tk.IntVar(value=1)
-        self.check_box = tk.Checkbutton(self.window, variable=self.silent_login, text="Launch steam to system tray", background="#0d0d0d", foreground="white", selectcolor="#0d0d0d")
+        self.check_box = tk.Checkbutton(self.window, variable=self.silent_login, text="Launch steam to system tray")
         self.check_box.grid(column=1, row=4, sticky="W", pady=(0, 50))
 
-        self.top2 = Label(self.window, text="Add new account", font="Arial 15 bold", background="#0d0d0d", foreground="white")
+        self.top2 = Label(self.window, text="Add new account", font="Arial 15 bold")
         self.top2.grid(column=1, row=9, columnspan=2, sticky="W")
 
-        self.username_lbl = tk.Label(self.window, text="Username:", background="#0d0d0d", foreground="white")
+        self.username_lbl = tk.Label(self.window, text="Username:")
         self.username_lbl.grid(column=0, row=10, pady=(10, 3), sticky="E")
         self.username_txt = tk.Entry(self.window, width=36)
         self.username_txt.grid(column=1, row=10, pady=(10, 3))
 
-        self.password_lbl = tk.Label(self.window, text="Password:", background="#0d0d0d", foreground="white")
+        self.password_lbl = tk.Label(self.window, text="Password:")
         self.password_lbl.grid(column=0, row=11, pady=3, sticky="E")
         self.password_txt = tk.Entry(self.window, width=36)
         self.password_txt.grid(column=1, row=11, pady=3)
 
-        self.secret_lbl = tk.Label(self.window, text="Secret id:", background="#0d0d0d", foreground="white")
+        self.secret_lbl = tk.Label(self.window, text="Secret id:")
         self.secret_lbl.grid(column=0, row=12, pady=3, sticky="E")
         self.secret_txt = tk.Entry(self.window, width=36)
         self.secret_txt.grid(column=1, row=12, pady=3)
 
-        self.add_user_btn = tk.Button(self.window, text="Add user", width=30, command=self.add_user, background="#0d0d0d", foreground="white", activebackground="#0d0d0d", activeforeground="white")
+        self.add_user_btn = tk.Button(self.window, text="Add user", width=30, command=self.add_user)
         self.add_user_btn.grid(column=1, row=13, columnspan=1, pady=3)
 
     def add_user(self):
