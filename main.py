@@ -14,6 +14,7 @@ import cv2
 import subprocess
 import win32api
 import win32com.client
+
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
@@ -24,6 +25,7 @@ class SteamAUTH:
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
+        self.shell = win32com.client.Dispatch("WScript.Shell")
 
     def generate_one_time_code(self):
         timestamp = int(time.time())
@@ -38,19 +40,18 @@ class SteamAUTH:
             code += chars[i]
         return code
 
-    def image_match(self, path):
+    def image_match(self, file):
         img_grab = ImageGrab.grab(bbox=[0, 0, win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1)])
         img_rgb = np.array(img_grab, dtype="uint8")
         img = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-        template = cv2.imread(f"steam_{path}.png", 0)
+        template = cv2.imread(os.path.join(os.path.dirname(os.path.abspath(__file__)), f"steam_{file}.png"), 0)
         res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
         loc = np.where(res >= 0.95)
         return loc
 
     def enter_2fa(self):
-        shell = win32com.client.Dispatch("WScript.Shell")
-        shell.SendKeys(self.generate_one_time_code())
-        shell.SendKeys("{ENTER}")
+        self.shell.SendKeys(self.generate_one_time_code())
+        self.shell.SendKeys("{ENTER}")
 
     def close_steam(self):
         os.system("taskkill /F /IM steam.exe")
@@ -67,23 +68,28 @@ class SteamAUTH:
                 messagebox.showinfo("Error", "Wrong password or username")
                 self.close_steam()
                 return False
+            if self.shared_secret == "":
+                break
             x, y = self.image_match("guard")
             if len(x) or len(y) > 0:
-                break
-        self.enter_2fa()
+                return self.enter_2fa()
 
 
 class SteamGUI:
     def __init__(self):
         self.window = Tk()
 
+    def get_path(self, file):
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{file}")
+
     def draw(self):
+        path = self.get_path("users.json")
         self.window.title("Steam Account Changer")
         self.window.geometry("300x310")
-        self.window.iconbitmap("icon.ico")
+        self.window.iconbitmap(self.get_path("icon.ico"))
         self.window.resizable(False, False)
         self.combo = Combobox(self.window, width=34, state="readonly")
-        with open("users.json", "r") as f:
+        with open(path, "r") as f:
             try:
                 data = json.load(f)
             except:
@@ -91,7 +97,7 @@ class SteamGUI:
         new_data = {}
         for i, item in enumerate(data):
             new_data[f"user{i}"] = data[item]
-        with open("users.json", "w") as f:
+        with open(path, "w") as f:
             json.dump(new_data, f, indent=4)
         if len(new_data) < 1:
             self.combo["values"] = {}
@@ -136,6 +142,7 @@ class SteamGUI:
         username = self.username_txt.get()
         password = self.password_txt.get()
         secret_id = self.secret_txt.get()
+        path = self.get_path("users.json")
         if not username:
             messagebox.showinfo("Error", "Cant add user without username")
             return False
@@ -143,31 +150,38 @@ class SteamGUI:
             messagebox.showinfo("Error", "Cant add user without password")
             return False
         else:
-            with open("users.json", "r") as f:
+            self.username_txt.delete(0, "end")
+            self.password_txt.delete(0, "end")
+            self.secret_txt.delete(0, "end")
+            with open(path, "r") as f:
                 data = json.load(f)
             data[f"user{len(data)}"] = {"username": f"{username}", "password": f"{password}", "shared_secret": f"{secret_id}"}
             self.combo["values"] = [data[i].get("username") for i in data]
-            with open("users.json", "w") as f:
+            with open(path, "w") as f:
                 data = json.dump(data, f, indent=4)
 
     def remove_user(self):
         pos = self.combo.current()
-        with open("users.json") as f:
+        path = self.get_path("users.json")
+        with open(path, "r") as f:
             data = json.load(f)
         if not data:
             messagebox.showinfo("Error", "No users to remove")
+            return False
         else:
             del data[f"user{pos}"]
             self.combo["values"] = [data[i].get("username") for i in data]
+            self.combo.set("")
             new_data = {}
             for i, item in enumerate(data):
                 new_data[f"user{i}"] = data[item]
-            with open("users.json", "w") as f:
+            with open(path, "w") as f:
                 data = json.dump(new_data, f, indent=4)
 
     def login_user(self):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "users.json")
         pos = self.combo.current()
-        with open("users.json") as f:
+        with open(path) as f:
             data = json.load(f).get(f"user{pos}")
         if not data:
             messagebox.showinfo("Error", "No users to login")
@@ -178,6 +192,7 @@ class SteamGUI:
     def run(self):
         self.draw()
         self.window.mainloop()
+
 
 if __name__ == "__main__":
     steam_gui = SteamGUI()
