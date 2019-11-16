@@ -80,8 +80,8 @@ class SteamGUI:
     def draw(self):
         self.window.title("Steam Account Changer")
         self.window.geometry("300x310")
+        self.window.iconbitmap("icon.ico")
         self.window.resizable(False, False)
-
         self.combo = Combobox(self.window, width=34, state="readonly")
         with open("users.json", "r") as f:
             try:
@@ -136,7 +136,6 @@ class SteamGUI:
         username = self.username_txt.get()
         password = self.password_txt.get()
         secret_id = self.secret_txt.get()
-
         if not username:
             messagebox.showinfo("Error", "Cant add user without username")
             return False
