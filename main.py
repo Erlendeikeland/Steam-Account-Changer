@@ -143,9 +143,6 @@ class SteamGUI:
         if not password:
             messagebox.showinfo("Error", "Cant add user without password")
             return False
-        if not secret_id:
-            messagebox.showinfo("Error", "Cant add user without secret_id")
-            return False
         else:
             with open("users.json", "r") as f:
                 data = json.load(f)
