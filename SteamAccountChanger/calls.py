@@ -20,9 +20,9 @@ class SteamCalls:
         self.client.showMinimized()
 
     def add_user(self, combo_box):
-        username = self.client.lineEdit.text()
-        password = self.client.lineEdit_2.text()
-        secret_id = self.client.lineEdit_3.text()
+        username = self.client.line_edit_0.text()
+        password = self.client.line_edit_1.text()
+        secret_id = self.client.line_edit_2.text()
         path = self.get_path("users.json")
         if not username:
             QMessageBox.about(self.client, "Error", "Cant add user without username")
@@ -31,9 +31,9 @@ class SteamCalls:
             QMessageBox.about(self.client, "Error", "Cant add user without password")
             return False
         else:
-            self.client.lineEdit.setText("")
-            self.client.lineEdit_2.setText("")
-            self.client.lineEdit_3.setText("")
+            self.client.line_edit_0.setText("")
+            self.client.line_edit_1.setText("")
+            self.client.line_edit_2.setText("")
             with open(path, "r") as f:
                 data = json.load(f)
             data[f"user{len(data)}"] = {"username": f"{username}", "password": f"{password}", "shared_secret": f"{secret_id}"}
@@ -46,7 +46,7 @@ class SteamCalls:
 
     def remove_user(self):
         path = self.get_path("users.json")
-        pos = self.client.comboBox.currentText()
+        pos = self.client.combo_box_0.currentText()
         with open(path, "r") as f:
             data = json.load(f)
         for i, item in enumerate(data):
@@ -55,9 +55,9 @@ class SteamCalls:
                 new_data = {}
                 for i, item in enumerate(data):
                     new_data[f"user{i}"] = data[item]
-                self.client.comboBox.clear()
+                self.client.combo_box_0.clear()
                 for i, item in enumerate(new_data):
-                    self.client.comboBox.addItem(new_data[item].get("username"))
+                    self.client.combo_box_0.addItem(new_data[item].get("username"))
                 with open(path, "w") as f:
                     data = json.dump(new_data, f, indent=4)
                 return True
@@ -66,7 +66,7 @@ class SteamCalls:
 
     def login_user(self):
         path = self.get_path("users.json")
-        pos = self.client.comboBox.currentText()
+        pos = self.client.combo_box_0.currentText()
         with open(path, "r") as f:
             data = json.load(f)
         for i in data:
@@ -94,6 +94,6 @@ class SteamCalls:
         with open(path, "w") as f:
             json.dump(new_data, f, indent=4)
         if len(new_data) > 0:
-            self.client.comboBox.clear()
+            self.client.combo_box_0.clear()
             for i, item in enumerate(new_data):
-                self.client.comboBox.addItem(new_data[item].get("username"))
+                self.client.combo_box_0.addItem(new_data[item].get("username"))

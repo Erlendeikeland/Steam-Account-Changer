@@ -6,123 +6,150 @@ from PyQt5.QtCore import QPoint
 
 from calls import SteamCalls
 
+
+def create_font(family, size):
+    font = QtGui.QFont()
+    font.setFamily(family)
+    font.setPointSize(size)
+    return font
+
+SMALL_FONT = create_font("Microsoft YaHei", 10)
+MEDIUM_FONT = create_font("Microsoft YaHei", 12)
+
+BG_COLOR = (49, 67, 79)
+DARK_BG_COLOR = (39, 53, 64)
+BUTTON_COLOR = (26, 115, 169)
+BUTTON_PRESSED_COLOR = (17, 77, 112)
+TEXT_COLOR = (255, 255, 255)
+
+def get_path(file):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), f"ui/{file}.png").replace("\\", "/")
+
+
 class SteamGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.calls = SteamCalls(self)
 
-    def setupUi(self):
-        self.resize(326, 384)
+    def create_font(self, family, size):
+        font = QtGui.QFont()
+        font.setFamily(family)
+        font.setPointSize(size)
+        return font
+
+    def setup_ui(self):
         self.setMinimumSize(QtCore.QSize(326, 384))
         self.setMaximumSize(QtCore.QSize(326, 384))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.setFont(font)
         self.setAutoFillBackground(False)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.setStyleSheet("""
-            *{
-                background-color: rgb(49, 67, 79);
-            }
-            QPushButton {
-                color: rgb(255, 255, 255);
-                background-color: rgb(26, 115, 169);
+        self.setTabShape(QtWidgets.QTabWidget.Rounded)
+        self.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks|QtWidgets.QMainWindow.AnimatedDocks)
+        self.centralwidget = QtWidgets.QWidget(self)
+        self.setStyleSheet(f"""
+            *{{
+                background-color: rgb{BG_COLOR};
+            }}
+            QPushButton {{
+                color: rgb{TEXT_COLOR};
+                background-color: rgb{BUTTON_COLOR};
                 border-radius: 7px;
-            }
-            QPushButton:pressed {
-                background-color: rgb(17, 77, 112);
-            }
-            QComboBox {
-                background-color: rgb(39, 53, 64);
-                color: rgb(255, 255, 255);
+            }}
+            QPushButton:pressed {{
+                background-color: rgb{BUTTON_PRESSED_COLOR};
+            }}
+            QComboBox {{
+                background-color: rgb{DARK_BG_COLOR};
+                color: rgb{TEXT_COLOR};
                 border-radius: 7px;
-            }
-            QComboBox:drop-down {
+            }}
+            QComboBox:drop-down {{
                 subcontrol-origin: padding;
                 subcontrol-position: top right;
                 width: 30px;
                 border-style: solid;
-            }
-            QComboBox:down-arrow {
-                image: url(ui/arrow_down.png);
-            }
-            QListView {
-                color: rgb(255, 255, 255);
-                background-color: rgb(39, 53, 64);
+            }}
+            QComboBox:down-arrow {{
+                image: url({get_path("arrow_down")});
+            }}
+            QListView {{
+                color: rgb{TEXT_COLOR};
+                background-color: rgb{DARK_BG_COLOR};
                 border-radius: 0px;
-            }
-            QCheckBox {
-                color: rgb(255, 255, 255);
-            }
-            QCheckBox::indicator:unchecked {
-                image: url(ui/check_box_marked.png);
+            }}
+            QCheckBox {{
+                color: rgb{TEXT_COLOR};
+            }}
+            QCheckBox::indicator:unchecked {{
+                image: url({get_path("check_box_marked")});
                 height: 16px;
                 width: 16px;
-            }
-            QCheckBox::indicator:checked {
-                image: url(ui/check_box_unmarked.png);
+            }}
+            QCheckBox::indicator:checked {{
+                image: url({get_path("check_box_unmarked")});
                 height: 16px;
                 width: 16px;
-            }
+            }}
         """)
-        self.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.setDockOptions(QtWidgets.QMainWindow.AllowTabbedDocks|QtWidgets.QMainWindow.AnimatedDocks)
-        self.centralwidget = QtWidgets.QWidget(self)
-        self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox.setGeometry(QtCore.QRect(80, 170, 161, 20))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.checkBox.setFont(font)
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(60, 270, 201, 31))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.pushButton.setFont(font)
-        self.pushButton.clicked.connect(self.calls.login_user)
-        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(40, 120, 251, 41))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.comboBox.setFont(font)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(40, 90, 71, 20))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(12)
-        self.label_2.setFont(font)
-        self.label_2.setStyleSheet("color: rgb(255, 255, 255);")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(60, 310, 91, 31))
-        self.pushButton_2.clicked.connect(self.show_add_user_form)
+        #Window titlebar Frame
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(-40, -20, 391, 41))
-        self.frame.setStyleSheet("background-color: rgb(39, 53, 64);")
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setStyleSheet(f"background-color: rgb{DARK_BG_COLOR};")
+
+        #Window exit button
         self.pushButton_5 = QtWidgets.QPushButton(self.frame)
         self.pushButton_5.setGeometry(QtCore.QRect(310, 20, 21, 21))
-        self.pushButton_5.setStyleSheet("""
-            image: url(ui/minimize_button.png);
+        self.pushButton_5.clicked.connect(self.calls.btn_min_clicked)
+        self.pushButton_5.setStyleSheet(f"""
+            image: url({get_path("minimize_button")});
             height: 16px;
             width: 16px;
         """)
-        self.pushButton_5.clicked.connect(self.calls.btn_min_clicked)
+
+        #Window minimize button
         self.pushButton_6 = QtWidgets.QPushButton(self.frame)
         self.pushButton_6.setGeometry(QtCore.QRect(340, 20, 21, 21))
-        self.pushButton_6.setStyleSheet("""
-            image: url(ui/close_button.png);
+        self.pushButton_6.clicked.connect(self.calls.btn_close_clicked)
+        self.pushButton_6.setStyleSheet(f"""
+            image: url({get_path("close_button")});
             height: 16px;
             width: 16px;
         """)
-        self.pushButton_6.clicked.connect(self.calls.btn_close_clicked)
-        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(170, 310, 91, 31))
-        self.pushButton_3.clicked.connect(self.calls.remove_user)
-        self.setCentralWidget(self.centralwidget)
 
+        #Account label
+        self.label_0 = QtWidgets.QLabel(self.centralwidget)
+        self.label_0.setGeometry(QtCore.QRect(40, 90, 71, 20))
+        self.label_0.setFont(MEDIUM_FONT)
+        self.label_0.setStyleSheet(f"color: rgb{TEXT_COLOR};")
+
+        #Combobox
+        self.combo_box_0 = QtWidgets.QComboBox(self.centralwidget)
+        self.combo_box_0.setGeometry(QtCore.QRect(40, 120, 246, 41))
+        self.combo_box_0.setFont(SMALL_FONT)
+
+        #Checkbox
+        self.check_box_0 = QtWidgets.QCheckBox(self.centralwidget)
+        self.check_box_0.setGeometry(QtCore.QRect(80, 170, 161, 20))
+        self.check_box_0.setFont(SMALL_FONT)
+
+        #Log-in button
+        self.push_button_0 = QtWidgets.QPushButton(self.centralwidget)
+        self.push_button_0.setGeometry(QtCore.QRect(60, 270, 206, 31))
+        self.push_button_0.setFont(SMALL_FONT)
+        self.push_button_0.clicked.connect(self.calls.login_user)
+
+        #Add user button
+        self.push_button_1 = QtWidgets.QPushButton(self.centralwidget)
+        self.push_button_1.setGeometry(QtCore.QRect(60, 310, 99, 31))
+        self.push_button_1.setFont(SMALL_FONT)
+        self.push_button_1.clicked.connect(self.show_add_user_form)
+
+        #remove user button
+        self.push_button_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.push_button_2.setGeometry(QtCore.QRect(168, 310, 98, 31))
+        self.push_button_2.setFont(SMALL_FONT)
+        self.push_button_2.clicked.connect(self.calls.remove_user)
+
+        self.setCentralWidget(self.centralwidget)
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
         self.oldPos = self.pos()
@@ -131,11 +158,12 @@ class SteamGUI(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.calls.update_json(_translate)
         self.setWindowTitle(_translate("Main", "Steam Account Changer"))
-        self.checkBox.setText(_translate("Main", "Launch to system tray"))
-        self.pushButton.setText(_translate("Main", "Log in"))
-        self.label_2.setText(_translate("Main", "Account"))
-        self.pushButton_2.setText(_translate("Main", "Add user"))
-        self.pushButton_3.setText(_translate("Main", "Remove user"))
+
+        self.check_box_0.setText(_translate("Main", "Launch to system tray"))
+        self.label_0.setText(_translate("Main", "Account"))
+        self.push_button_0.setText(_translate("Main", "Log in"))
+        self.push_button_1.setText(_translate("Main", "Add user"))
+        self.push_button_2.setText(_translate("Main", "Remove user"))
 
     def mousePressEvent(self, event):
         self.old_pos = event.globalPos()
@@ -148,8 +176,8 @@ class SteamGUI(QMainWindow):
         self.old_pos = event.globalPos()
 
     def show_add_user_form(self):
-        self.add_user_form = SteamGUIForm(self.comboBox)
-        self.add_user_form.setupUi()
+        self.add_user_form = SteamGUIForm(self.combo_box_0)
+        self.add_user_form.setup_ui()
         self.add_user_form.show()
 
 
@@ -159,91 +187,94 @@ class SteamGUIForm(QWidget):
         self.calls = SteamCalls(self)
         self.combo_box = combo_box
 
-    def setupUi(self):
-        self.resize(295, 295)
+    def setup_ui(self):
         self.setMinimumSize(QtCore.QSize(295, 295))
         self.setMaximumSize(QtCore.QSize(295, 295))
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.setStyleSheet("""
-            *{
-                background-color: rgb(49, 67, 79);
-            }
-            QPushButton {
-                color: rgb(255, 255, 255);
-                background-color: rgb(26, 115, 169);
-                border-radius: 7px;z|
-            }
-            QPushButton:pressed {
-                background-color: rgb(17, 77, 112);
-            }
-            QLineEdit {
-                color: rgb(255, 255, 255);
-                background-color:  rgb(39, 53, 64);
+        self.setStyleSheet(f"""
+            *{{
+                background-color: rgb{BG_COLOR};
+            }}
+            QPushButton {{
+                color: rgb{TEXT_COLOR};
+                background-color: rgb{BUTTON_COLOR};
                 border-radius: 7px;
-            }
+            }}
+            QPushButton:pressed {{
+                background-color: rgb{BUTTON_PRESSED_COLOR};
+            }}
+            QLineEdit {{
+                color: rgb{TEXT_COLOR};
+                background-color: rgb{DARK_BG_COLOR};
+                border-radius: 7px;
+            }}
         """)
-        self.frame = QtWidgets.QFrame(self)
-        self.frame.setGeometry(QtCore.QRect(-70, -20, 391, 41))
-        self.frame.setStyleSheet("background-color: rgb(39, 53, 64);")
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.pushButton_5 = QtWidgets.QPushButton(self.frame)
-        self.pushButton_5.setGeometry(QtCore.QRect(310, 20, 21, 21))
-        self.pushButton_5.setStyleSheet("""
-            image: url(ui/minimize_button.png);
+        #Window titlebar frame
+        self.frame_0 = QtWidgets.QFrame(self)
+        self.frame_0.setGeometry(QtCore.QRect(-70, -20, 391, 41))
+        self.frame_0.setStyleSheet(f"background-color: rgb{DARK_BG_COLOR};")
+
+        #Window exit button
+        self.push_button_0 = QtWidgets.QPushButton(self.frame_0)
+        self.push_button_0.setGeometry(QtCore.QRect(340, 20, 21, 21))
+        self.push_button_0.clicked.connect(self.calls.btn_close_clicked)
+        self.push_button_0.setStyleSheet(f"""
+            image: url({get_path("close_button")});
             height: 16px;
             width: 16px;
         """)
-        self.pushButton_5.clicked.connect(self.calls.btn_min_clicked)
-        self.pushButton_6 = QtWidgets.QPushButton(self.frame)
-        self.pushButton_6.setGeometry(QtCore.QRect(340, 20, 21, 21))
-        self.pushButton_6.setStyleSheet("""
-            image: url(ui/close_button.png);
+
+        #Window minimize button
+        self.push_button_1 = QtWidgets.QPushButton(self.frame_0)
+        self.push_button_1.setGeometry(QtCore.QRect(310, 20, 21, 21))
+        self.push_button_1.clicked.connect(self.calls.btn_min_clicked)
+        self.push_button_1.setStyleSheet(f"""
+            image: url({get_path("minimize_button")});
             height: 16px;
             width: 16px;
         """)
-        self.pushButton_6.clicked.connect(self.calls.btn_close_clicked)
+
+        #Add new account label
+        self.label_0 = QtWidgets.QLabel(self)
+        self.label_0.setGeometry(QtCore.QRect(20, 40, 151, 20))
+        self.label_0.setFont(MEDIUM_FONT)
+        self.label_0.setStyleSheet(f"color: rgb{TEXT_COLOR};")
+
+        #Username label
+        self.label_1 = QtWidgets.QLabel(self)
+        self.label_1.setGeometry(QtCore.QRect(20, 80, 71, 20))
+        self.label_1.setFont(SMALL_FONT)
+        self.label_1.setStyleSheet(f"color: rgb{TEXT_COLOR};")
+
+        #Username lineedit
+        self.line_edit_0 = QtWidgets.QLineEdit(self)
+        self.line_edit_0.setGeometry(QtCore.QRect(20, 100, 241, 25))
+
+        #Password label
         self.label_2 = QtWidgets.QLabel(self)
-        self.label_2.setGeometry(QtCore.QRect(20, 40, 151, 20))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(12)
-        self.label_2.setFont(font)
-        self.label_2.setStyleSheet("color: rgb(255, 255, 255);")
+        self.label_2.setGeometry(QtCore.QRect(20, 130, 71, 20))
+        self.label_2.setFont(SMALL_FONT)
+        self.label_2.setStyleSheet(f"color: rgb{TEXT_COLOR};")
+
+        #Password lineedit
+        self.line_edit_1 = QtWidgets.QLineEdit(self)
+        self.line_edit_1.setGeometry(QtCore.QRect(20, 150, 241, 25))
+
+        #Secret id label
         self.label_3 = QtWidgets.QLabel(self)
-        self.label_3.setGeometry(QtCore.QRect(20, 80, 71, 20))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.label_3.setFont(font)
-        self.label_3.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lineEdit = QtWidgets.QLineEdit(self)
-        self.lineEdit.setGeometry(QtCore.QRect(20, 100, 241, 25))
-        self.label_4 = QtWidgets.QLabel(self)
-        self.label_4.setGeometry(QtCore.QRect(20, 130, 71, 20))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.label_4.setFont(font)
-        self.label_4.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lineEdit_2 = QtWidgets.QLineEdit(self)
-        self.lineEdit_2.setGeometry(QtCore.QRect(20, 150, 241, 25))
-        self.label_5 = QtWidgets.QLabel(self)
-        self.label_5.setGeometry(QtCore.QRect(20, 180, 71, 20))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.label_5.setFont(font)
-        self.label_5.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lineEdit_3 = QtWidgets.QLineEdit(self)
-        self.lineEdit_3.setGeometry(QtCore.QRect(20, 200, 241, 25))
-        self.pushButton = QtWidgets.QPushButton(self)
-        self.pushButton.setGeometry(QtCore.QRect(20, 240, 241, 31))
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(10)
-        self.pushButton.setFont(font)
-        self.pushButton.clicked.connect(lambda: self.calls.add_user(self.combo_box))
+        self.label_3.setGeometry(QtCore.QRect(20, 180, 71, 20))
+        self.label_3.setFont(SMALL_FONT)
+        self.label_3.setStyleSheet(f"color: rgb{TEXT_COLOR};")
+
+        #Secret id lineedit
+        self.line_edit_2 = QtWidgets.QLineEdit(self)
+        self.line_edit_2.setGeometry(QtCore.QRect(20, 200, 241, 25))
+
+        #Add new account button
+        self.push_button_2 = QtWidgets.QPushButton(self)
+        self.push_button_2.setGeometry(QtCore.QRect(20, 240, 241, 31))
+        self.push_button_2.setFont(SMALL_FONT)
+        self.push_button_2.clicked.connect(lambda: self.calls.add_user(self.combo_box))
 
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -251,12 +282,13 @@ class SteamGUIForm(QWidget):
 
     def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Form", "Add new user"))
-        self.label_2.setText(_translate("Form", "Add new account"))
-        self.label_3.setText(_translate("Form", "Username:"))
-        self.label_4.setText(_translate("Form", "Password:"))
-        self.label_5.setText(_translate("Form", "Secret ID:"))
-        self.pushButton.setText(_translate("Form", "Add new account"))
+        self.setWindowTitle(_translate("Form", "Form"))
+
+        self.label_0.setText(_translate("Form", "Add new account"))
+        self.label_1.setText(_translate("Form", "Username:"))
+        self.label_2.setText(_translate("Form", "Password:"))
+        self.label_3.setText(_translate("Form", "Secret ID:"))
+        self.push_button_2.setText(_translate("Form", "Add new account"))
 
     def mousePressEvent(self, event):
         self.old_pos = event.globalPos()
