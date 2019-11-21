@@ -40,7 +40,7 @@ class SteamAUTH:
         img_grab = ImageGrab.grab(bbox=[0, 0, win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1)])
         img_rgb = np.array(img_grab, dtype="uint8")
         img = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-        template = cv2.imread(f"ui/steam_{file}.png", 0)
+        template = cv2.imread(os.path.join(os.path.dirname(os.path.abspath(__file__)), f"ui/steam_{file}.png"), 0)
         res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
         loc = np.where(res >= 0.95)
         return loc

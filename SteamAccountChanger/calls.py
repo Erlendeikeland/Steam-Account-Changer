@@ -71,7 +71,7 @@ class SteamCalls:
             data = json.load(f)
         for i in data:
             if pos == data[i].get("username"):
-                steam = SteamAUTH(data[i].get("username"), data[i].get("password"), data[i].get("shared_secret"), self.client.checkBox.isChecked())
+                steam = SteamAUTH(data[i].get("username"), data[i].get("password"), data[i].get("shared_secret"), self.client.check_box_0.isChecked())
                 status = steam.run()
                 if status != True:
                     QMessageBox.about(self.client, "Error", status)
