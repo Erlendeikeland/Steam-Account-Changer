@@ -1,1 +1,7 @@
-
+{
+    "user0": {
+        "username": "asd",
+        "password": "asdasd",
+        "shared_secret": ""
+    }
+}
