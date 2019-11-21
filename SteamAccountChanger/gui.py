@@ -171,7 +171,7 @@ class SteamGUIForm(QWidget):
             QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(26, 115, 169);
-                border-radius: 7px;
+                border-radius: 7px;z|
             }
             QPushButton:pressed {
                 background-color: rgb(17, 77, 112);
