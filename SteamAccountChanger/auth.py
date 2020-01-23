@@ -11,16 +11,17 @@ import numpy as np
 import cv2
 
 import subprocess
-import win32api
+import win32api, win32con
 import win32com.client
 
 
 class SteamAUTH:
-    def __init__(self, username, password, shared_secret, silent_login):
+    def __init__(self, username, password, shared_secret, silent_login, remember_me):
         self.username = username
         self.password = password
         self.shared_secret = shared_secret
         self.silent_login = silent_login
+        self.remember_me = remember_me
         self.shell = win32com.client.Dispatch("WScript.Shell")
 
     def generate_one_time_code(self):
@@ -53,20 +54,60 @@ class SteamAUTH:
         os.system("taskkill /F /IM steam.exe")
 
     def open_steam(self):
-        if self.silent_login == False:
-            process = subprocess.Popen(f'"C:\Program Files (x86)\Steam\Steam.exe" -login {self.username} {self.password} -silent')
-        elif self.silent_login == True:
-            process = subprocess.Popen(f'"C:\Program Files (x86)\Steam\Steam.exe" -login {self.username} {self.password}')
+        if self.silent_login == True:
+            if self.remember_me == True:
+                process = subprocess.Popen(f'"C:\Program Files (x86)\Steam\Steam.exe" -silent')
+            elif self.remember_me == False:
+                process = subprocess.Popen(f'"C:\Program Files (x86)\Steam\Steam.exe" -login {self.username} {self.password} -silent')
+        elif self.silent_login == False:
+            if self.remember_me == True:
+                process = subprocess.Popen(f'"C:\Program Files (x86)\Steam\Steam.exe"')
+            elif self.remember_me == False:
+                process = subprocess.Popen(f'"C:\Program Files (x86)\Steam\Steam.exe" -login {self.username} {self.password}')
+
+    def login(self, x, y):
+        for _ in range(2):
+            self.mouse_click(x, y)
+        self.shell.SendKeys("{DELETE}")
+        win32api.Sleep(50)
+        self.shell.SendKeys(f"{self.username}")
+        win32api.Sleep(50)
+        self.shell.SendKeys("{TAB}")
+        win32api.Sleep(50)
+        self.shell.SendKeys(f"{self.password}")
+        win32api.Sleep(50)
+        self.shell.SendKeys("{TAB}")
+        win32api.Sleep(50)
+        self.shell.SendKeys(" ")
+        win32api.Sleep(50)
+        self.shell.SendKeys("{TAB}")
+        win32api.Sleep(50)
+        self.shell.SendKeys("{ENTER}")
+
+    def mouse_click(self, posx, posy):
+        click_x = posx + 130
+        click_y = posy + 100
+        win32api.SetCursorPos((click_x, click_y))
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, click_x, click_y, 0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, click_x, click_y, 0, 0)
 
     def run(self):
         self.close_steam()
         self.open_steam()
-        while True:
-            z, j = self.image_match("wrong")
-            if len(z) or len(j) > 0:
-                self.close_steam()
-                return "Wrong username or password"
-            x, y = self.image_match("guard")
-            if len(x) or len(y) > 0:
-                self.enter_2fa()
-                return True
+        if self.remember_me == True:
+            while True:
+                y, x = self.image_match("login")
+                if len(x) or len(y) > 0:
+                    self.login(x, y)
+                    break
+        if self.shared_secret:
+            while True:
+                z, j = self.image_match("wrong")
+                if len(z) or len(j) > 0:
+                    self.close_steam()
+                    return "Wrong username or password"
+                x, y = self.image_match("guard")
+                if len(x) or len(y) > 0:
+                    self.enter_2fa()
+                    return True
+        return True

@@ -7,8 +7,6 @@ from gui import SteamGUI
 def run():
     app = QApplication(sys.argv)
     gui = SteamGUI()
-    gui.setup_ui()
-    gui.show()
     sys.exit(app.exec_())
 
 
